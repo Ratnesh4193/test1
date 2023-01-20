@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header1 from "../../Headers/Header1/Header1";
 import { Space, Spin } from "antd";
-import Houseshow from "../Houseshow/Houseshow.js";
+import Houseshow from "../Houseshow/houseshow.js";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import "./styles.css";
@@ -22,11 +22,10 @@ const Home = () => {
       Navigate("/");
       return;
     }
-    console.log(JSON.parse(localStorage.getItem("tokenStore")).token);
     try {
       const res = await axios.post(
         "/verify",
-        JSON.parse(localStorage.getItem("tokenStore")).token
+        {token:JSON.parse(localStorage.getItem("tokenStore")).token}
       );
       setLoggedinPerson(JSON.parse(localStorage.getItem("tokenStore")).id);
       setToken(JSON.parse(localStorage.getItem("tokenStore")).token);
@@ -42,11 +41,13 @@ const Home = () => {
   const gethouses = async () => {
     const info = {
       location: loc,
-      token: token,
+      token
     };
-    console.log(info);
     try {
+      
       const res = await axios.post("/houses", info);
+      console.log(info);
+    
       setAllHouses(res.data);
       setIsLoading(false);
     } catch (err) {

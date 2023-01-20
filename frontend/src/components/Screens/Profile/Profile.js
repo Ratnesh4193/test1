@@ -1,24 +1,39 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import Houseshow from "../Houseshow/Houseshow";
+import Houseshow from "../Houseshow/houseshow.js";
 import Header from "../../Headers/Header3/Header3";
 import { Space, Spin } from "antd";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "./styles.css";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
-  const navigate = useNavigate();
-  const loggedinPerson = JSON.parse(localStorage.getItem("tokenStore")).id;
-  const token = JSON.parse(localStorage.getItem("tokenStore")).token;
+  const Navigate = useNavigate();
+  const [loggedinPerson, setLoggedinPerson] = useState("");
+  const [token, setToken] = useState("");
 
   const [allHouses, setAllHouses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const checklogin = () => {
+  const checklogin = async () => {
     if (localStorage.length === 0) {
-      navigate("/");
+      Navigate("/");
+      return;
+    }
+    try {
+      const res = await axios.post(
+        "/verify",
+        {token:JSON.parse(localStorage.getItem("tokenStore")).token}
+      );
+      setLoggedinPerson(JSON.parse(localStorage.getItem("tokenStore")).id);
+      setToken(JSON.parse(localStorage.getItem("tokenStore")).token);
+    } catch (err) {
+      toast.error("Authentication failed!", {
+        position: "top-center",
+        autoClose: 2000,
+      });
+      Navigate("/");
     }
   };
 
@@ -42,11 +57,11 @@ const Profile = () => {
   const myHouses = [];
 
   useEffect(() => {
+    checklogin();
     gethouses();
   }, []);
   return (
     <>
-      {checklogin()}
       <div style={{ position: "fixed", zIndex: "10", top: 0 }}>
         <Header />
       </div>

@@ -28,7 +28,6 @@ const Add_house = () => {
 
     const token = JSON.parse(localStorage.getItem("tokenStore"));
 
-    console.log(token.id);
     const houseinfo = {
       address: house.address,
       city: house.city,
